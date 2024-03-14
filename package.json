@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "editor-full-screen",
 	"version": "1.0.0",
-	"description": "desc",
+	"description": "switch the editor to full screen",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

@@ -1,23 +1,23 @@
-import { Plugin } from "obsidian";
-import { SampleSettingTab } from "./settings.js";
-import { DEFAULT_SETTINGS, MyPluginSettings } from "./variables.js";
-import { Console } from "./Console.js";
+import { Plugin, View } from "obsidian";
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
-	
-	async onload() {
-		Console.log("logs...");
-
-		await this.loadSettings();
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+export default class EditorFullScreen extends Plugin {
+	fullScreen = false;
+	onload() {
+		this.addCommand({
+			id: "editor-full-screen",
+			name: "Switch editor full screen",
+			callback: () => this.fullscreenMode(),
+		});
 	}
 
-	async loadSettings() {
-		this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
+	fullscreenMode() {
+		const activeView =  this.app.workspace.getActiveViewOfType(View)
+		if (!activeView) return;
+		const el = activeView.containerEl;
+		if (!this.fullScreen) el.requestFullscreen();
+		else {
+			activeDocument.exitFullscreen();
+		}
+		this.fullScreen = !this.fullScreen;
 	}
 }

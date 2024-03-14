@@ -1,9 +1,9 @@
 {
-	"id": "sample-plugin-modif",
-	"name": "Sample Plugin modif",
+	"id": "editor-full-screen",
+	"name": "Editor full screen",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "sample plugin modif.",
+	"description": "switch the editor to full screen",
 	"author": "Obsidian",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",
