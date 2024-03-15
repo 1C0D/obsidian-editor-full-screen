@@ -1,6 +1,8 @@
 # Editor Full Screen
 
-Switch editor active view to full screen.
-add a shortcut (suggestion: alt+f) to toggle the full screen mode. Or run the command to enter full screen and press esc to exist full screen.
+Ideal for presentations
 
-Limitation: it doesn't support OS split windows. it's going to full screen no matter what
+Full screen mode: only the file content is shown (hotkey suggestion: ctrl+alt+f)
+Zen mode: the navigation bar still appears (hotkey suggestion: alt+f)
+
+limitations: the context menu can't be used. If you split or reduce a window in you OS, it will go full screen anyway, not the window size.

@@ -1,23 +1,29 @@
 import { Plugin, View } from "obsidian";
 
 export default class EditorFullScreen extends Plugin {
-	fullScreen = false;
 	onload() {
 		this.addCommand({
 			id: "editor-full-screen",
-			name: "Switch editor full screen",
-			callback: () => this.fullscreenMode(),
+			name: "Full screen mode",
+			callback: () => this.toggleMode()
 		});
+		this.addCommand({
+			id: "editor-zen-mode",
+			name: "Zen mode",
+			callback: () => this.toggleMode(true),
+		});
+
 	}
 
-	fullscreenMode() {
-		const activeView =  this.app.workspace.getActiveViewOfType(View)
+	toggleMode(zen=false) {
+		const activeView = this.app.workspace.getActiveViewOfType(View)
 		if (!activeView) return;
-		const el = activeView.containerEl;
-		if (!this.fullScreen) el.requestFullscreen();
-		else {
-			activeDocument.exitFullscreen();
+		if (!document.fullscreenElement) {
+			let el = zen? activeView.containerEl : activeView.containerEl.lastElementChild as HTMLElement;
+			el.requestFullscreen()
+		} else {
+			if (document.fullscreenElement)
+				document.exitFullscreen()
 		}
-		this.fullScreen = !this.fullScreen;
 	}
 }
