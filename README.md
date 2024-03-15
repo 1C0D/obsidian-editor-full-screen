@@ -7,3 +7,5 @@ Full screen mode: only the file content is shown. by default the status bar is h
 Zen Mode: the navigation bar is still visible. (hotkey suggestion alt+f) 
 
 It fits to the window content. So you can split, resize your OS window it will fit in
+
+![demo](demo.gif)
