@@ -1,8 +1,9 @@
 # Editor Full Screen
 
-Ideal for presentations
+Ideal for presentations or to have a better perspective to work
 
-Full screen mode: only the file content is shown (hotkey suggestion: ctrl+alt+f)
-Zen mode: the navigation bar still appears (hotkey suggestion: alt+f)
+Full screen mode: only the file content is shown. by default the status bar is hidden (see settings)
 
-limitations: the context menu can't be used. If you split or reduce a window in you OS, it will go full screen anyway, not the window size.
+Zen Mode: the navigation bar is still visible. quite like in VSC 
+
+It fits to the window content. So you can split, resize your OS window it will fit in
