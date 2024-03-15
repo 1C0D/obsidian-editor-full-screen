@@ -1,1 +1,1 @@
-2 commands full screen or zen mode
+fit to the window 
