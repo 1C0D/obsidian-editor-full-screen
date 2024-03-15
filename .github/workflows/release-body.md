@@ -1,1 +1,1 @@
-first version ok
+2 commands full screen or zen mode
