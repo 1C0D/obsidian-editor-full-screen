@@ -1,6 +1,6 @@
 {
 	"name": "editor-full-screen",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Full screen mode (ideal for presentations) or Zen mode (ideal for focused writing), adjusting to fit the OS window size.",
 	"main": "main.js",
 	"type": "module",
