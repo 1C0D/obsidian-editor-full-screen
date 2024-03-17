@@ -1,1 +1,1 @@
-fit to the window 
+code improvements
