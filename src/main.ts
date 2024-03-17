@@ -9,7 +9,6 @@ export interface EFSSettings {
 }
 
 export default class EditorFullScreen extends Plugin {
-	originalWorkspaceContent = '';
 	fullScreen = false;
 	settings: EFSSettings;
 	async onload() {
@@ -42,16 +41,12 @@ export default class EditorFullScreen extends Plugin {
 
 		const leafContent = zen ? activeView.containerEl : activeView.containerEl.lastElementChild as HTMLElement;
 		const workspaceContainer = document.querySelector('.workspace');
-		leafContent.style.marginTop = zen ? '5.2vh' : '0'
+		leafContent.classList.toggle('zen-mode',true)
 
 		if (!workspaceContainer) return;
 
-		if (!this.originalWorkspaceContent) {
-			this.originalWorkspaceContent = workspaceContainer.innerHTML;
-		}
-
 		if (!this.fullScreen) {
-			workspaceContainer.innerHTML = '';
+			workspaceContainer.empty();
 			workspaceContainer.appendChild(leafContent);
 			if (!zen && this.settings.hideStatusBar) {
 				//toggle class hide-status-bar
@@ -64,7 +59,6 @@ export default class EditorFullScreen extends Plugin {
 		this.fullScreen = !this.fullScreen;
 	}
 }
-
 
 class EFSSettingTab extends PluginSettingTab {
 	plugin: EditorFullScreen;
@@ -79,7 +73,7 @@ class EFSSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Hide status bar when full screen')
+			.setName('Hide status bar in full screen')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.hideStatusBar)
 				.onChange(async (value) => {

@@ -1,3 +1,8 @@
 .hide-status-bar {
-    display: none !important;
+    display: none;
+}
+
+
+.zen-mode {
+    margin-top: 5.2vh;
 }
