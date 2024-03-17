@@ -49,7 +49,6 @@ export default class EditorFullScreen extends Plugin {
 			workspaceContainer.empty();
 			workspaceContainer.appendChild(leafContent);
 			if (!zen && this.settings.hideStatusBar) {
-				//toggle class hide-status-bar
 				const bar = document.querySelector(".status-bar")
 				bar!.classList.toggle('hide-status-bar', true);
 			}
