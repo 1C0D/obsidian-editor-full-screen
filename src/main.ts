@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting, View } from "obsidian";
+import { App, Plugin, PluginSettingTab, Setting, View, WorkspaceSidedock } from "obsidian";
 
 const DEFAULT_SETTINGS: EFSSettings = {
 	hideStatusBar: true,
@@ -10,11 +10,14 @@ export interface EFSSettings {
 
 export default class EditorFullScreen extends Plugin {
 	fullScreen = false;
+	zen = false;
 	settings: EFSSettings;
+	isRightSideOpen = false;
+	isLeftSideOpen = false;
+
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new EFSSettingTab(this.app, this));
-
 		this.addCommand({
 			id: "editor-full-screen",
 			name: "Full screen mode",
@@ -36,8 +39,56 @@ export default class EditorFullScreen extends Plugin {
 	}
 
 	toggleMode(zen = false) {
-		conditionalToggle(this, this.fullScreen, zen);
 		this.fullScreen = !this.fullScreen;
+		this.zen = zen;
+		const actionsOnMove = (event: MouseEvent) => {
+			onMouseMove(event, this);
+		}
+		if (this.fullScreen) {
+			document.addEventListener("mousemove", actionsOnMove);
+		} else {
+			document.removeEventListener("mousemove", actionsOnMove);
+		}
+
+		conditionalToggle(this, this.fullScreen, zen);
+	}
+}
+
+let leftEdgeThreshold = 15;
+let upEdgeThreshold = 20;
+function onMouseMove(e: MouseEvent, modal: EditorFullScreen) {
+	const xPosition = e.clientX;
+	const yPosition = e.clientY;
+
+	const { ribbon, rootHeader, viewHeader, workspaceLeafContent } = getOtherEl();
+	if (ribbon && rootHeader && modal.fullScreen) {
+		if (xPosition <= leftEdgeThreshold) {
+			ribbon.classList.remove('hide-el');
+			leftEdgeThreshold = 50
+		}
+		else {
+			if (!this.fullScreen) {
+				ribbon.classList.add('hide-el');
+			}
+			leftEdgeThreshold = 15
+		}
+		if (yPosition <= upEdgeThreshold) {
+			rootHeader.classList.remove('hide-el');
+			if (!modal.zen) {
+				workspaceLeafContent?.classList.remove('zen-mode');
+				viewHeader?.classList.remove('hide-el');
+			}
+			upEdgeThreshold = 140;
+		} else {
+			if (!modal.zen) {
+				viewHeader?.classList.add('hide-el');
+				workspaceLeafContent?.classList.add('zen-mode');
+			}
+			if (!this.fullScreen) {
+				rootHeader.classList.add('hide-el');
+			}
+			upEdgeThreshold = 20;
+		}
 	}
 }
 
@@ -53,10 +104,8 @@ function getOtherEl() {
 }
 
 function toggleOtherEl(value = true) {
-	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader } = getOtherEl()
+	const { ribbon, rootHeader } = getOtherEl()
 	ribbon?.classList.toggle('hide-el', value);
-	leftSplit?.classList.toggle('hide-el', value);
-	rightSplit?.classList.toggle('hide-el', value);
 	rootHeader?.classList.toggle('hide-el', value);
 }
 
@@ -64,7 +113,8 @@ function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: 
 	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader } = getOtherEl()
 
 	toggleOtherEl(isfullscreen)
-	
+	toggleSibebars(modal, isfullscreen)
+
 	if (zen) {
 		workspaceLeafContent?.classList.toggle('zen-mode', isfullscreen)
 	} else {
@@ -72,6 +122,12 @@ function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: 
 		if (modal.settings.hideStatusBar) {
 			toggleStatusbar(isfullscreen)
 		}
+	}
+
+	if (!isfullscreen) {
+		workspaceLeafContent?.classList.remove('zen-mode')
+		viewHeader?.classList.remove('hide-el')
+
 	}
 }
 
@@ -102,3 +158,33 @@ class EFSSettingTab extends PluginSettingTab {
 				}));
 	}
 }
+
+function toggleSibebars(modal: EditorFullScreen, fullScreen = true) {
+	if (!fullScreen) {
+		modal.isLeftSideOpen = isOpen(getLeftSplit(modal));
+		modal.isRightSideOpen = isOpen(getRightSplit(modal));
+		getLeftSplit(modal).collapse();
+		getRightSplit(modal).collapse();
+	} else {
+		if (modal.isLeftSideOpen) {
+			getLeftSplit(modal).expand();
+		}
+		if (modal.isRightSideOpen) {
+			getRightSplit(modal).expand();
+		}
+	}
+}
+
+function getLeftSplit(modal: EditorFullScreen) {
+	return modal.app.workspace.leftSplit;
+}
+
+function getRightSplit(modal: EditorFullScreen) {
+	return modal.app.workspace.rightSplit;
+}
+
+function isOpen(side: WorkspaceSidedock) {
+	if (side.collapsed == true) return false;
+	else return true;
+}
+
