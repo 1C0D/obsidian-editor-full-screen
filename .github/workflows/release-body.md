@@ -1,1 +1,1 @@
-no restart, when toggling, anymore
+fix: status bar was always hidden
