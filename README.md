@@ -14,4 +14,4 @@ To show headers go to the top edge
 
 It fits to the window content. So you can split, resize your OS window it will fit in
 
-![demo](fullscreen.gif)
+![demo](cool.gif)
