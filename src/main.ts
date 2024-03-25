@@ -54,14 +54,16 @@ export default class EditorFullScreen extends Plugin {
 	}
 }
 
-let leftEdgeThreshold = 15;
+let leftEdgeThreshold = 20;
 let upEdgeThreshold = 20;
+let bottomEdgeThreshold = 200;
+let rightEdgeThreshold = 350;
 function onMouseMove(e: MouseEvent, modal: EditorFullScreen) {
 	const xPosition = e.clientX;
 	const yPosition = e.clientY;
 
-	const { ribbon, rootHeader, viewHeader, workspaceLeafContent } = getOtherEl();
-	if (ribbon && rootHeader && modal.fullScreen) {
+	const { ribbon, rootHeader, viewHeader, workspaceLeafContent, statusBar } = getOtherEl();
+	if (ribbon && rootHeader && statusBar && modal.fullScreen) {
 		if (xPosition <= leftEdgeThreshold) {
 			ribbon.classList.remove('hide-el');
 			leftEdgeThreshold = 50
@@ -89,6 +91,13 @@ function onMouseMove(e: MouseEvent, modal: EditorFullScreen) {
 			}
 			upEdgeThreshold = 20;
 		}
+		if (!modal.zen && yPosition >= (window.innerHeight - bottomEdgeThreshold) && xPosition >= (window.innerWidth - rightEdgeThreshold)) {
+				statusBar.classList.remove('hide-el');
+			} else {
+				if (!modal.zen && !this.fullScreen) {
+					statusBar.classList.add('hide-el');
+				}
+			}
 	}
 }
 
@@ -100,7 +109,8 @@ function getOtherEl() {
 	const rootHeader = root?.querySelector(".workspace-tabs.mod-top-right-space>.workspace-tab-header-container")
 	const workspaceLeafContent = root?.querySelector(".workspace-leaf-content")
 	const viewHeader = root?.querySelector(".workspace-leaf-content>.view-header")
-	return { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader }
+	const statusBar = document.querySelector(".status-bar")
+	return { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader, statusBar }
 }
 
 function toggleOtherEl(value = true) {
@@ -110,7 +120,7 @@ function toggleOtherEl(value = true) {
 }
 
 function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: boolean) {
-	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader } = getOtherEl()
+	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader, statusBar } = getOtherEl()
 
 	toggleOtherEl(isfullscreen)
 	toggleSibebars(modal, isfullscreen)
@@ -120,20 +130,18 @@ function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: 
 	} else {
 		viewHeader?.classList.toggle('hide-el', isfullscreen);
 		if (modal.settings.hideStatusBar) {
-			toggleStatusbar(isfullscreen)
+			statusBar?.classList.toggle('hide-el', isfullscreen);
 		}
 	}
 
 	if (!isfullscreen) {
 		workspaceLeafContent?.classList.remove('zen-mode')
 		viewHeader?.classList.remove('hide-el')
+		modal.isRightSideOpen = false;
+		modal.isLeftSideOpen = false;
+		statusBar?.classList.remove('hide-el')
 
 	}
-}
-
-function toggleStatusbar(value = true) {
-	const bar = document.querySelector(".status-bar")
-	bar?.classList.toggle('hide-el', value);
 }
 
 class EFSSettingTab extends PluginSettingTab {
@@ -160,9 +168,10 @@ class EFSSettingTab extends PluginSettingTab {
 }
 
 function toggleSibebars(modal: EditorFullScreen, fullScreen = true) {
-	if (!fullScreen) {
+	if (fullScreen) {
 		modal.isLeftSideOpen = isOpen(getLeftSplit(modal));
 		modal.isRightSideOpen = isOpen(getRightSplit(modal));
+		console.log("modal.isLeftSideOpen", modal.isLeftSideOpen)
 		getLeftSplit(modal).collapse();
 		getRightSplit(modal).collapse();
 	} else {
