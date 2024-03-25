@@ -1,5 +1,5 @@
-.hide-status-bar {
-    display: none;
+.hide-el {
+    display: none !important;
 }
 
 .zen-mode {

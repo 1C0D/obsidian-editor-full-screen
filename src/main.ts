@@ -36,27 +36,48 @@ export default class EditorFullScreen extends Plugin {
 	}
 
 	toggleMode(zen = false) {
-		const activeView = this.app.workspace.getActiveViewOfType(View)
-		if (!activeView) return;
-
-		const leafContent = zen ? activeView.containerEl : activeView.containerEl.lastElementChild as HTMLElement;
-		const workspaceContainer = document.querySelector('.workspace');
-		leafContent.classList.toggle('zen-mode',true)
-
-		if (!workspaceContainer) return;
-
-		if (!this.fullScreen) {
-			workspaceContainer.empty();
-			workspaceContainer.appendChild(leafContent);
-			if (!zen && this.settings.hideStatusBar) {
-				const bar = document.querySelector(".status-bar")
-				bar!.classList.toggle('hide-status-bar', true);
-			}
-		} else {
-			window.location.reload();
-		}
+		conditionalToggle(this, this.fullScreen, zen);
 		this.fullScreen = !this.fullScreen;
 	}
+}
+
+function getOtherEl() {
+	const ribbon = document.querySelector(".workspace-ribbon")
+	const leftSplit = document.querySelector(".mod-left-split")
+	const rightSplit = document.querySelector(".mod-right-split")
+	const root = document?.querySelector(".workspace-tabs.mod-top-right-space")
+	const rootHeader = root?.querySelector(".workspace-tabs.mod-top-right-space>.workspace-tab-header-container")
+	const workspaceLeafContent = root?.querySelector(".workspace-leaf-content")
+	const viewHeader = root?.querySelector(".workspace-leaf-content>.view-header")
+	return { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader }
+}
+
+function toggleOtherEl(value = true) {
+	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader } = getOtherEl()
+	ribbon?.classList.toggle('hide-el', value);
+	leftSplit?.classList.toggle('hide-el', value);
+	rightSplit?.classList.toggle('hide-el', value);
+	rootHeader?.classList.toggle('hide-el', value);
+}
+
+function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: boolean) {
+	const { ribbon, leftSplit, rightSplit, rootHeader, workspaceLeafContent, viewHeader } = getOtherEl()
+
+	toggleOtherEl(isfullscreen)
+	
+	if (zen) {
+		workspaceLeafContent?.classList.toggle('zen-mode', isfullscreen)
+	} else {
+		viewHeader?.classList.toggle('hide-el', isfullscreen);
+		if (modal.settings.hideStatusBar) {
+			toggleStatusbar(isfullscreen)
+		}
+	}
+}
+
+function toggleStatusbar(value = true) {
+	const bar = document.querySelector(".status-bar")
+	bar?.classList.toggle('hide-el', value);
 }
 
 class EFSSettingTab extends PluginSettingTab {

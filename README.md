@@ -1,5 +1,7 @@
 # Editor Full Screen
 
+New: no restart anymore.
+
 Ideal for presentations or to have a better perspective to work
 
 Full screen mode: only the file content is shown. by default the status bar is hidden (see settings) (hotkey suggestion ctrl+alt+f)
