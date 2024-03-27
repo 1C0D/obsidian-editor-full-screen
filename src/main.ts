@@ -59,12 +59,12 @@ function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: 
 	toggleSibebars(modal, isfullscreen)
 	toggleEls(isfullscreen, elements)
 
-	const { activeView,workspaceLeafContent, viewHeader, statusBar } = elements
-	const leafContent = zen ? activeView?.containerEl : activeView?.containerEl.lastElementChild as HTMLElement;
-	leafContent?.classList.toggle('zen-mode', true)
-
+	const { activeView, viewHeader, statusBar } = elements
+	// const leafContent = zen ? activeView?.containerEl : activeView?.containerEl.lastElementChild as HTMLElement;
+	const leafContent = activeView?.containerEl;
+	
 	if (zen) {
-		// activeView?.containerEl?.classList.toggle('zen-mode', isfullscreen)
+		leafContent?.classList.add('zen-mode')
 	} else {
 		viewHeader?.classList.toggle('hide-el', isfullscreen);
 		if (modal.settings.hideStatusBar) {
@@ -72,7 +72,7 @@ function conditionalToggle(modal: EditorFullScreen, isfullscreen: boolean, zen: 
 		}
 	}
 	if (!isfullscreen) {
-		workspaceLeafContent?.classList.remove('zen-mode')
+		leafContent?.classList.remove('zen-mode')
 		viewHeader?.classList.remove('hide-el')
 		modal.isRightSideOpen = false;
 		modal.isLeftSideOpen = false;
@@ -107,7 +107,7 @@ let upEdgeThreshold = 20;
 let bottomEdgeThreshold = 200;
 let rightEdgeThreshold = 350;
 function onMouseMove(e: MouseEvent, modal: EditorFullScreen, elements: Elements) {
-	const { activeView, ribbon, rootHeader, workspaceLeafContent, viewHeader, statusBar } = elements
+	const { activeView, ribbon, rootHeader, viewHeader, statusBar } = elements
 	if (!activeView) return
 
 	const xPosition = e.clientX;
@@ -128,14 +128,14 @@ function onMouseMove(e: MouseEvent, modal: EditorFullScreen, elements: Elements)
 		if (yPosition <= upEdgeThreshold) {
 			if (rootHeader) rootHeader.classList.remove('hide-el');
 			if (!modal.zen) {
-				workspaceLeafContent?.classList.remove('zen-mode');
+				activeView?.containerEl.classList.remove('zen-mode');
 				viewHeader?.classList.remove('hide-el');
 			}
 			upEdgeThreshold = 140;
 		} else {
 			if (!modal.zen) {
 				viewHeader?.classList.add('hide-el');
-				workspaceLeafContent?.classList.add('zen-mode');
+				activeView?.containerEl.classList.add('zen-mode');
 			}
 			if (rootHeader && !this.fullScreen) {
 				rootHeader.classList.add('hide-el');
